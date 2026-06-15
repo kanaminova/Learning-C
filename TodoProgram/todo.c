@@ -1,17 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
+#define MAX_TASKS 10
 
-int addTask(char tasks[10][100], int taskCount);
-void viewTasks(char tasks[10][100], int taskCount);
+int addTask(char tasks[MAX_TASKS][100], int taskCount);
+void viewTasks(char tasks[MAX_TASKS][100], int taskCount);
+void clearScreen();
 
 int main(){
 
-    char tasks[10][100];
+    char tasks[MAX_TASKS][100];
     char selection[10];
     int taskCount = 0;
     int running = 1;
 
     while(running){
-        
+        clearScreen();
+
         printf("Whaddya wanna do? :3\n");
         printf("1. Add a task\n");
         printf("2. View tasks\n");
@@ -20,16 +24,24 @@ int main(){
         
         fgets(selection, 10, stdin);
 
-        if(selection[0] == '1'){
-            taskCount = addTask(tasks, taskCount);
-        }
+        switch(selection[0]){
 
-        if(selection[0] == '2'){
-            viewTasks(tasks, taskCount);
-        }
-
-        if(selection[0] == '3'){
-            running = 0;
+            case '1':
+                clearScreen();
+                taskCount = addTask(tasks, taskCount);
+                break;
+            case '2':
+                clearScreen();
+                viewTasks(tasks, taskCount);
+                printf("Press enter to continue...");
+                fgets(selection, 10, stdin);
+                break;
+            case '3':
+                running = 0;
+                break;
+            default:
+                printf("That's not an option!! >:C\n");
+                break;
         }
 
     }
@@ -38,10 +50,10 @@ int main(){
 
 }
 
-int addTask(char tasks[10][100], int taskCount){
-    if(taskCount >= 10){
+int addTask(char tasks[MAX_TASKS][100], int taskCount){
+    if(taskCount >= MAX_TASKS){
         printf("Sorry, you've reached the limit for tasks! :C\n");
-
+        return taskCount;
     }
     else{
         printf("What task do yuo want to add? :3\n");
@@ -59,7 +71,7 @@ int addTask(char tasks[10][100], int taskCount){
     return taskCount;
 }
 
-void viewTasks(char tasks[10][100], int taskCount){
+void viewTasks(char tasks[MAX_TASKS][100], int taskCount){
     if(taskCount == 0){
         printf("No tasks to display! :C\n");
     }
@@ -69,4 +81,8 @@ void viewTasks(char tasks[10][100], int taskCount){
             printf("%d. %s\n", i + 1, tasks[i]);
         }
     }
+}
+
+void clearScreen(){
+    system("cls");
 }
