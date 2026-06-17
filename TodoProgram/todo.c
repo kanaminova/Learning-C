@@ -5,6 +5,8 @@
 int addTask(char tasks[MAX_TASKS][100], int taskCount);
 void viewTasks(char tasks[MAX_TASKS][100], int taskCount);
 int removeTask(char tasks[MAX_TASKS][100], int taskCount);
+void saveTasks(char tasks[MAX_TASKS][100], int taskCount);
+int loadTasks(char tasks[MAX_TASKS][100], int taskCount);
 void clearScreen();
 
 int main(){
@@ -13,6 +15,7 @@ int main(){
     char selection[10];
     int taskCount = 0;
     int running = 1;
+    taskCount = loadTasks(tasks, taskCount);
 
     while(running){
         clearScreen();
@@ -77,6 +80,7 @@ int addTask(char tasks[MAX_TASKS][100], int taskCount){
         }
         taskCount++;
     }
+    saveTasks(tasks, taskCount);
     return taskCount;
 }
 
@@ -90,9 +94,11 @@ int removeTask(char tasks[MAX_TASKS][100], int taskCount){
 
     viewTasks(tasks, taskCount);
 
-    int index;
+    char input[10];
     printf("\nWhich task do you wanna remove? (1-%d): ", taskCount);
-    scanf("%d", &index);
+    fgets(input, 10, stdin);
+
+    int index = atoi(input);
 
     index--;
 
@@ -117,6 +123,7 @@ int removeTask(char tasks[MAX_TASKS][100], int taskCount){
     printf("Okay, it gone now :3\n");
     printf("Press enter to continue...");
     getchar();
+    
     return taskCount;
 }
 
@@ -131,6 +138,40 @@ void viewTasks(char tasks[MAX_TASKS][100], int taskCount){
             printf("%d. %s\n", i + 1, tasks[i]);
         }
     }
+}
+
+void saveTasks(char tasks[MAX_TASKS][100], int taskCount){
+    FILE *file = fopen("tasks.txt", "w");
+
+    for(int i = 0; i < taskCount; i++){
+        fprintf(file, "%s\n", tasks[i]);
+    }
+    
+    fclose(file);
+    }
+
+int loadTasks(char tasks[MAX_TASKS][100], int taskCount){
+    FILE *file = fopen("tasks.txt", "r");
+    if(file == NULL){
+        taskCount = 0;
+        return taskCount;
+    }
+
+    taskCount = 0;
+
+    while(taskCount < MAX_TASKS && fgets(tasks[taskCount], 100, file) != NULL){
+        int i = 0;
+        while(tasks[taskCount][i] != '\0'){
+            if(tasks[taskCount][i] == '\n'){
+                tasks[taskCount][i] = '\0';
+                break;
+            }
+            i++;
+        }
+        taskCount++;
+    }
+    fclose(file);
+    return taskCount;
 }
 
 void clearScreen(){
